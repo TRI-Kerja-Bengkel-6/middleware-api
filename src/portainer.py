@@ -1,12 +1,12 @@
 import requests
 import json
 
-def login():
+def login(username,password):
     url = "https://admin.kerbengenam.my.id/api/auth"
 
     payload = json.dumps({
-    "password": "kerjabengkel6",
-    "username": "admin"
+    "password": password,
+    "username": username
     })
     headers = {
     'Content-Type': 'application/json'
@@ -18,23 +18,41 @@ def login():
 
     return res
 
-def createStack():
+def createStack(name, app, template, token, subdomain, db_password):
     url = "https://admin.kerbengenam.my.id/api/stacks"
 
-    payload={'type': '1',
-            'method': 'file',
-            'endpointId': '3',
-            'Name': 'wordpress-client1',
-            'SwarmID': '29o5t7fpff07hwj7s4g65ruvr'}
-    files=[('file',('docker-compose.yml',open('/C:/Users/komjar2/Desktop/docker-compose.yml','rb'),'application/octet-stream'))]
+    payload={
+        'type': '1',
+        'method': 'file',
+        'endpointId': '3',
+        'Name': name,
+        'SwarmID': '29o5t7fpff07hwj7s4g65ruvr',
+        'Env': json.dumps([
+            {'name': 'SUBDOMAIN', 'value': f'{subdomain}'},
+            {'name': 'WORDPRESS_DB_PASSWORD', 'value': f'{db_password}'}
+        ])
+    }
+    files=[('file',(f'{app}.yml',open(template,'rb'),'application/octet-stream'))]
     headers = {
-    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOjEsInNjb3BlIjoiZGVmYXVsdCIsImZvcmNlQ2hhbmdlUGFzc3dvcmQiOmZhbHNlLCJleHAiOjE2NjczODMwMTcsImlhdCI6MTY2NzM1NDIxN30.oceqflmJw7pK9qM_F_m5ONq2pFHU18fsyZneQP4-QT4'
+        'Authorization': f'Bearer {token}'
     }
 
-    response = requests.request("POST", url, headers=headers, data=payload, files=files)
+    response = requests.request("POST", url, headers=headers, data=payload, files=files, verify=False)
 
-    print(response.text)
+    result = response.json()
+
+    if response.status_code == 200:
+        output = {'status': 'successful',
+                  'app_domain': f'{subdomain}.kerbengenam.my.id',
+                  'phpmyadmin (if any)': f'{subdomain}.phpmyadmin.kerbengenam.my.id',
+                  'info': "if the webservice can't be accessed, pls wait atleast 1 minute. please contact admin@kerbengenam.my.id if there's still a problem",
+                  'response': result}
+    else:
+        output = {'status': 'unsuccessfull',
+                  'response': result}
+
+    return output
 
 
-if __name__ == '__main__':
-    print(login()['jwt'])
+# if __name__ == '__main__':
+#     print(login('admin','kerjabengkel6')['jwt'])

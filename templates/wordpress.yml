@@ -1,0 +1,74 @@
+version: "3"
+
+services:
+  # Database
+  db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    networks:
+      - backend
+  # phpmyadmin
+  phpmyadmin:
+    depends_on:
+      - db
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+    networks:
+      - backend
+      - traefik-public
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        # change the host here
+        - "traefik.http.routers.${SUBDOMAIN}-phpmyadmin.rule=Host(`phpmyadmin.${SUBDOMAIN}.kerbengenam.my.id`)"
+        - "traefik.http.routers.${SUBDOMAIN}-phpmyadmin.entrypoints=websecure"
+        - "traefik.http.routers.${SUBDOMAIN}-phpmyadmin.tls=true"
+        - "traefik.http.routers.${SUBDOMAIN}-phpmyadmin.tls.certresolver=leresolver"
+        - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+        - "traefik.http.routers.${SUBDOMAIN}-phpmyadmin.middlewares=redirect-to-https@docker"
+        - "traefik.http.services.${SUBDOMAIN}-phpmyadmin.loadbalancer.server.port=80"
+  # Wordpress
+  wordpress:
+    depends_on:
+      - db
+    image: wordpress:latest
+    restart: always
+    volumes:
+      - wp_data:/var/www/html
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+    networks:
+      - backend
+      - traefik-public
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        # change the host here
+        - "traefik.http.routers.${SUBDOMAIN}-wordpress.rule=Host(`${SUBDOMAIN}.kerbengenam.my.id`)"
+        - "traefik.http.routers.${SUBDOMAIN}-wordpress.entrypoints=websecure"
+        - "traefik.http.routers.${SUBDOMAIN}-wordpress.tls=true"
+        - "traefik.http.routers.${SUBDOMAIN}-wordpress.tls.certresolver=leresolver"
+        - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+        - "traefik.http.routers.${SUBDOMAIN}-wordpress.middlewares=redirect-to-https@docker"
+        - "traefik.http.services.${SUBDOMAIN}-wordpress.loadbalancer.server.port=80"
+
+networks:
+  backend:
+  traefik-public:
+    external: true
+
+volumes:
+  db_data:
+  wp_data:
