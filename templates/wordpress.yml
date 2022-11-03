@@ -36,7 +36,7 @@ services:
         - "traefik.http.routers.${SUBDOMAIN}-phpmyadmin.tls.certresolver=leresolver"
         - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
         - "traefik.http.routers.${SUBDOMAIN}-phpmyadmin.middlewares=redirect-to-https@docker"
-        - "traefik.http.services.${SUBDOMAIN}-phpmyadmin.loadbalancer.server.port=80"
+        - "traefik.http.services.${SUBDOMAIN}-phpmyadmin.loadbalancer.server.port=3306"
   # Wordpress
   wordpress:
     depends_on:
