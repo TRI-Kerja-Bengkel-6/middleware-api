@@ -31,17 +31,23 @@ class createStack(Resource):
     def post(self):
 
         # Filter out the request arguments
-        parser = reqparse.RequestParser()
-        parser.add_argument('username',  required=False, default=None, location='args')
-        parser.add_argument('app',  required=False, default=None, location='args')
-        parser.add_argument('password',  required=False, default=None, location='args')
-        parser.add_argument('subdomain',  required=False, default=None, location='args')
+        try:
+            parser = reqparse.RequestParser()
+            parser.add_argument('username',  required=False, default=None, location='args')
+            parser.add_argument('app',  required=False, default=None, location='args')
+            parser.add_argument('password',  required=False, default=None, location='args')
+            parser.add_argument('subdomain',  required=False, default=None, location='args')
 
-        args = parser.parse_args()
-        username = args['username']
-        app = args['app']
-        password = args['password']
-        subdomain = args['subdomain']
+            args = parser.parse_args()
+        except:
+            print(f'Content type is: {request.headers["Content-Type"]}')
+        
+        form = request.form
+
+        username = args['username'] or form['username']
+        app = args['app'] or form['app']
+        password = args['password'] or form['password'] 
+        subdomain = args['subdomain'] or form['subdomain']
 
         res = service(username, password, app, subdomain)
 
