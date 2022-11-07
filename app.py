@@ -93,8 +93,8 @@ class createStack(Resource):
 
             args = parser.parse_args()
         except:
-            print(f'Content type is: {request.headers["Content-Type"]}')
-        
+            pass
+
         form = request.form
 
         username = args['username'] or form['username']
@@ -108,4 +108,4 @@ class createStack(Resource):
 
 if __name__ == '__main__':
     app.secret_key = 'kerbengenam-middleware'
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(debug=True, host="0.0.0.0", port=5000, ssl_context=('./sslcert/cert.pem','./sslcert/key.pem'))
