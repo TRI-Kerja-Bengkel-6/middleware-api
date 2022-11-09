@@ -34,7 +34,8 @@ def check_token(f):
             print(request.headers.get('authorization'))
             user = auth.verify_id_token(request.headers['authorization'].replace('Bearer ',''))
             request.user = user
-        except:
+        except Exception as e:
+            print(e)
             return {'message':'Invalid token provided.'},400
         return f(*args, **kwargs)
     return wrap
@@ -78,7 +79,7 @@ class createStack(Resource):
             'username': {'description': 'Username klien', 'type': 'String', 'required': False},
             'app': {'description': 'Aplikasi yang akan diinstall', 'type': 'String', 'required': False},
             'password': {'description': 'default password yang akan digunakan pada aplikasi tersebut. (phpmyadmin)', 'type': 'String', 'required': False},
-            'subdomain': {'description': 'subdomain ingin digunakan', 'type': 'String', 'required': False}
+            'subdomain': {'description': 'subdomain ingin digunakan', 'type': 'String', 'required': False},
             'email': {'description': 'user email', 'type': 'String', 'required': False}
     })
     @ cross_origin()
