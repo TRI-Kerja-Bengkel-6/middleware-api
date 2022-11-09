@@ -111,8 +111,8 @@ class createStack(Resource):
 
         return jsonify(res)
 
-@ portainer_namespace.route('/getUserDomain', methods=['POST'])
-class createStack(Resource):
+@ portainer_namespace.route('/getUserDomain', methods=['GET'])
+class getUserDomain(Resource):
     @ portainer_namespace.doc(
         responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, 
         params={
