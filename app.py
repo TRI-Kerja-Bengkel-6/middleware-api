@@ -79,7 +79,7 @@ class createStack(Resource):
             'username': {'description': 'Username klien', 'type': 'String', 'required': False},
             'app': {'description': 'Aplikasi yang akan diinstall', 'type': 'String', 'required': False},
             'password': {'description': 'default password yang akan digunakan pada aplikasi tersebut. (phpmyadmin)', 'type': 'String', 'required': False},
-            'subdomain': {'description': 'subdomain ingin digunakan', 'type': 'String', 'required': False}
+            'subdomain': {'description': 'subdomain ingin digunakan', 'type': 'String', 'required': False},
             'email': {'description': 'user email', 'type': 'String', 'required': False}
     })
     @ cross_origin()
