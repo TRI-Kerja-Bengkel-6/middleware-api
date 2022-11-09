@@ -1,4 +1,5 @@
 from src.service import service
+from src.database import MySQL
 import argparse
 import time
 
@@ -79,6 +80,7 @@ class createStack(Resource):
             'app': {'description': 'Aplikasi yang akan diinstall', 'type': 'String', 'required': False},
             'password': {'description': 'default password yang akan digunakan pada aplikasi tersebut. (phpmyadmin)', 'type': 'String', 'required': False},
             'subdomain': {'description': 'subdomain ingin digunakan', 'type': 'String', 'required': False}
+            'email': {'description': 'user email', 'type': 'String', 'required': False}
     })
     @ cross_origin()
     @ check_token
@@ -91,6 +93,7 @@ class createStack(Resource):
             parser.add_argument('app',  required=False, default=None, location='args')
             parser.add_argument('password',  required=False, default=None, location='args')
             parser.add_argument('subdomain',  required=False, default=None, location='args')
+            parser.add_argument('email',  required=False, default=None, location='args')
 
             args = parser.parse_args()
         except:
@@ -102,11 +105,40 @@ class createStack(Resource):
         app = args['app'] or form['app']
         password = args['password'] or form['password'] 
         subdomain = args['subdomain'] or form['subdomain']
+        email = args['email'] or form['email']
 
         res = service(username, password, app, subdomain)
+        mysql.saving(email, res['app_domain'])
+
+        return jsonify(res)
+
+@ portainer_namespace.route('/getUserDomain', methods=['POST'])
+class createStack(Resource):
+    @ portainer_namespace.doc(
+        responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, 
+        params={
+            'email': {'description': 'user email', 'type': 'String', 'required': False}
+    })
+    @ cross_origin()
+    @ check_token
+    def get(self):
+        try:
+            parser = reqparse.RequestParser()
+            parser.add_argument('email',  required=False, default=None, location='args')
+
+            args = parser.parse_args()
+        except:
+            pass
+
+        form = request.form
+
+        email = args['email'] or form['email']
+
+        res = mysql.load(email)
 
         return jsonify(res)
 
 if __name__ == '__main__':
+    mysql = MySQL()
     app.secret_key = 'kerbengenam-middleware'
     app.run(debug=True, host="0.0.0.0", port=5000, ssl_context=('./sslcert/cert.pem','./sslcert/key.pem'))
