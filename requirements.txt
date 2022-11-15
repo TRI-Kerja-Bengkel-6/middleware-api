@@ -6,3 +6,4 @@ Werkzeug==2.1.2
 Requests
 pyrebase4
 firebase-admin
+mysql-connector
