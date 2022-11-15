@@ -31,7 +31,7 @@ def check_token(f):
         if not request.headers.get('authorization'):
             return {'message': 'No token provided'},400
         try:
-            print(request.headers.get('authorization'))
+            print(print(request.headers['authorization']))
             user = auth.verify_id_token(request.headers['authorization'].replace('Bearer ',''))
             request.user = user
         except Exception as e:
@@ -106,13 +106,17 @@ class createStack(Resource):
         password = args['password'] or form['password'] 
         subdomain = args['subdomain'] or form['subdomain']
         email = args['email'] or form['email']
+        print(form)
 
         res = service(username, password, app, subdomain)
-        mysql.saving(email, res['app_domain'])
+        try:
+           mysql.saving(email, res['app_domain'])
+        except:
+           pass
 
         return jsonify(res)
 
-@ portainer_namespace.route('/getUserDomain', methods=['GET'])
+@ portainer_namespace.route('/getUserDomain', methods=['POST'])
 class getUserDomain(Resource):
     @ portainer_namespace.doc(
         responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, 
@@ -121,7 +125,7 @@ class getUserDomain(Resource):
     })
     @ cross_origin()
     @ check_token
-    def get(self):
+    def post(self):
         try:
             parser = reqparse.RequestParser()
             parser.add_argument('email',  required=False, default=None, location='args')
