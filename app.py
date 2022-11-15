@@ -14,11 +14,12 @@ from flask_cors import CORS, cross_origin
 from flask_restx import Resource, Api, reqparse
 
 app = Flask(__name__)
+CORS(app)
 api = Api(app=app,
           version="1.0",
           title="kerbengenam middleware API")
 
-CORS(app, resources={r'/v1/*': {'origins': '*'}})
+
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['JSON_SORT_KEYS'] = False
 
