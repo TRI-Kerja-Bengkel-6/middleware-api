@@ -147,7 +147,7 @@ class getUserDomain(Resource):
         return jsonify(res)
 
 @ portainer_namespace.route('/getWebsiteStatus', methods=['POST'])
-class getUserDomain(Resource):
+class getWebsiteStatus(Resource):
     @ portainer_namespace.doc(
         responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, 
         params={
