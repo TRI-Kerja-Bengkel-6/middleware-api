@@ -31,11 +31,7 @@ services:
         - "traefik.enable=true"
         # change the host here
         - "traefik.http.routers.${SUBDOMAIN}-phpmyadmin.rule=Host(`phpmyadmin.${SUBDOMAIN}.kerbengenam.my.id`)"
-        - "traefik.http.routers.${SUBDOMAIN}-phpmyadmin.entrypoints=websecure"
-        - "traefik.http.routers.${SUBDOMAIN}-phpmyadmin.tls=true"
-        - "traefik.http.routers.${SUBDOMAIN}-phpmyadmin.tls.certresolver=leresolver"
-        - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-        - "traefik.http.routers.${SUBDOMAIN}-phpmyadmin.middlewares=redirect-to-https@docker"
+        - "traefik.http.routers.${SUBDOMAIN}-phpmyadmin.entrypoints=web"
         - "traefik.http.services.${SUBDOMAIN}-phpmyadmin.loadbalancer.server.port=80"
   # Wordpress
   wordpress:
@@ -57,11 +53,7 @@ services:
         - "traefik.enable=true"
         # change the host here
         - "traefik.http.routers.${SUBDOMAIN}-wordpress.rule=Host(`${SUBDOMAIN}.kerbengenam.my.id`)"
-        - "traefik.http.routers.${SUBDOMAIN}-wordpress.entrypoints=websecure"
-        - "traefik.http.routers.${SUBDOMAIN}-wordpress.tls=true"
-        - "traefik.http.routers.${SUBDOMAIN}-wordpress.tls.certresolver=leresolver"
-        - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-        - "traefik.http.routers.${SUBDOMAIN}-wordpress.middlewares=redirect-to-https@docker"
+        - "traefik.http.routers.${SUBDOMAIN}-wordpress.entrypoints=web"
         - "traefik.http.services.${SUBDOMAIN}-wordpress.loadbalancer.server.port=80"
 
 networks:
