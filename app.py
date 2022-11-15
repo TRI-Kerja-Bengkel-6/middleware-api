@@ -130,7 +130,6 @@ class getUserDomain(Resource):
     @ check_token
     @ cross_origin()
     def post(self):
-        @ cross_origin()
         try:
             parser = reqparse.RequestParser()
             parser.add_argument('email',  required=False, default=None, location='args')
