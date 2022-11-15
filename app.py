@@ -42,6 +42,7 @@ def check_token(f):
 
 #Api route to sign up a new user
 @app.route('/api/signup')
+@cross_origin()
 def signup():
     email = request.form.get('email')
     password = request.form.get('password')
@@ -58,6 +59,7 @@ def signup():
 
 #Api route to get a new token for a valid user
 @app.route('/api/token')
+@cross_origin()
 def token():
     email = request.form.get('email')
     password = request.form.get('password')
@@ -145,4 +147,4 @@ class getUserDomain(Resource):
 if __name__ == '__main__':
     mysql = MySQL()
     app.secret_key = 'kerbengenam-middleware'
-    app.run(debug=True, host="0.0.0.0", port=5000, ssl_context=('./sslcert/cert.pem','./sslcert/key.pem'))
+    app.run(debug=True, host="0.0.0.0", port=5000)
