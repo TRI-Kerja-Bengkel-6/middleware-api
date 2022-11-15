@@ -15,7 +15,7 @@ services:
             # change the host here
             - "traefik.http.routers.api.rule=Host(`api.kerbengenam.my.id`)"
             - "traefik.http.routers.api.entrypoints=web"
-            - "traefik.http.services.api.loadbalancer.server.port=80"
+            - "traefik.http.services.api.loadbalancer.server.port=5000"
 
 networks:
   backend:
