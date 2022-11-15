@@ -127,9 +127,10 @@ class getUserDomain(Resource):
         params={
             'email': {'description': 'user email', 'type': 'String', 'required': False}
     })
-    @ cross_origin()
     @ check_token
+    @ cross_origin()
     def post(self):
+        @ cross_origin()
         try:
             parser = reqparse.RequestParser()
             parser.add_argument('email',  required=False, default=None, location='args')
