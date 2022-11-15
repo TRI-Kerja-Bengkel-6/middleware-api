@@ -26,7 +26,7 @@ firebase = firebase_admin.initialize_app(cred)
 pb = pyrebase.initialize_app(json.load(open('fbconfig.json')))
 
 def check_token(f):
-    @cross_origin()
+    @ cross_origin()
     @ wraps(f)
     def wrap(*args,**kwargs):
         if not request.headers.get('authorization'):
@@ -144,13 +144,6 @@ class getUserDomain(Resource):
         res = mysql.load(email)
 
         return jsonify(res)
-
-@app.after_request 
-def after_request(response):
-    header = response.headers
-    header['Access-Control-Allow-Origin'] = '*'
-    # Other headers can be added here if needed
-    return response
 
 if __name__ == '__main__':
     mysql = MySQL()
