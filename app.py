@@ -26,6 +26,7 @@ firebase = firebase_admin.initialize_app(cred)
 pb = pyrebase.initialize_app(json.load(open('fbconfig.json')))
 
 def check_token(f):
+    @cross_origin()
     @ wraps(f)
     def wrap(*args,**kwargs):
         if not request.headers.get('authorization'):
