@@ -2,6 +2,7 @@ from src.service import service
 from src.database import MySQL
 import argparse
 import time
+import urllib.request
 
 import firebase_admin
 import pyrebase
@@ -142,6 +143,32 @@ class getUserDomain(Resource):
         email = args['email'] or form['email']
 
         res = mysql.load(email)
+
+        return jsonify(res)
+
+@ portainer_namespace.route('/getWebsiteStatus', methods=['POST'])
+class getUserDomain(Resource):
+    @ portainer_namespace.doc(
+        responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, 
+        params={
+            'domain': {'description': 'user email', 'type': 'String', 'required': False}
+    })
+    @ cross_origin()
+    @ check_token
+    def post(self):
+        try:
+            parser = reqparse.RequestParser()
+            parser.add_argument('domain',  required=False, default=None, location='args')
+
+            args = parser.parse_args()
+        except:
+            pass
+
+        form = request.form
+
+        domain = args['domain'] or form['domain']
+
+        res = {'status': urllib.request.urlopen(f"https://{domain}").getcode()} 
 
         return jsonify(res)
 
