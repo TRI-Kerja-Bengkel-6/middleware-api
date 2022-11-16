@@ -1,8 +1,6 @@
 from src.service import service
 from src.database import MySQL
-import argparse
-import time
-import urllib.request
+import requests
 
 import firebase_admin
 import pyrebase
@@ -180,7 +178,7 @@ def getWebsiteStatus():
 
     domain = args['domain'] or form['domain']
 
-    res = {'status': urllib.request.urlopen(f"http://{domain}").getcode()} 
+    res = {'status': requests.get(f"http://{domain}").status_code} 
 
     return jsonify(res)
 
