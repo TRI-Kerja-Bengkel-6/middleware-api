@@ -180,7 +180,7 @@ def getWebsiteStatus():
 
     domain = args['domain'] or form['domain']
 
-    res = {'status': urllib.request.urlopen(f"https://{domain}").getcode()} 
+    res = {'status': urllib.request.urlopen(f"http://{domain}").getcode()} 
 
     return jsonify(res)
 
