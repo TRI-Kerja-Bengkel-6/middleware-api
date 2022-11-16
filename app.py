@@ -76,7 +76,9 @@ def token():
 
 portainer_namespace = api.namespace('v1', 
                     description='Calling portainer API for multiple purpose')
+
 @ portainer_namespace.route('/createStack', methods=['POST'])
+@ cross_origin()
 class createStack(Resource):
     @ portainer_namespace.doc(
         responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, 
@@ -87,7 +89,6 @@ class createStack(Resource):
             'subdomain': {'description': 'subdomain ingin digunakan', 'type': 'String', 'required': False},
             'email': {'description': 'user email', 'type': 'String', 'required': False}
     })
-    @ cross_origin()
     @ check_token
     def post(self):
 
@@ -122,6 +123,7 @@ class createStack(Resource):
         return jsonify(res)
 
 @ portainer_namespace.route('/getUserDomain', methods=['POST'])
+@ cross_origin()
 class getUserDomain(Resource):
     @ portainer_namespace.doc(
         responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, 
@@ -129,7 +131,6 @@ class getUserDomain(Resource):
             'email': {'description': 'user email', 'type': 'String', 'required': False}
     })
     @ check_token
-    @ cross_origin()
     def post(self):
         try:
             parser = reqparse.RequestParser()
@@ -148,6 +149,7 @@ class getUserDomain(Resource):
         return jsonify(res)
 
 @ portainer_namespace.route('/getWebsiteStatus', methods=['POST'])
+@ cross_origin()
 class getWebsiteStatus(Resource):
     @ portainer_namespace.doc(
         responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, 
@@ -155,7 +157,6 @@ class getWebsiteStatus(Resource):
             'domain': {'description': 'user email', 'type': 'String', 'required': False}
     })
     @ cross_origin()
-    @ check_token
     def post(self):
         try:
             parser = reqparse.RequestParser()
