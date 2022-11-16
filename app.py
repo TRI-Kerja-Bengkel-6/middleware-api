@@ -77,102 +77,112 @@ def token():
 portainer_namespace = api.namespace('v1', 
                     description='Calling portainer API for multiple purpose')
 
-@ portainer_namespace.route('/createStack', methods=['POST'])
-@ cross_origin()
-class createStack(Resource):
-    @ portainer_namespace.doc(
-        responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, 
-        params={
-            'username': {'description': 'Username klien', 'type': 'String', 'required': False},
-            'app': {'description': 'Aplikasi yang akan diinstall', 'type': 'String', 'required': False},
-            'password': {'description': 'default password yang akan digunakan pada aplikasi tersebut. (phpmyadmin)', 'type': 'String', 'required': False},
-            'subdomain': {'description': 'subdomain ingin digunakan', 'type': 'String', 'required': False},
-            'email': {'description': 'user email', 'type': 'String', 'required': False}
-    })
-    @ check_token
-    def post(self):
+# @ portainer_namespace.route('/createStack', methods=['POST'])
+# @ cross_origin()
+# class createStack(Resource):
+#     @ portainer_namespace.doc(
+#         responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, 
+#         params={
+#             'username': {'description': 'Username klien', 'type': 'String', 'required': False},
+#             'app': {'description': 'Aplikasi yang akan diinstall', 'type': 'String', 'required': False},
+#             'password': {'description': 'default password yang akan digunakan pada aplikasi tersebut. (phpmyadmin)', 'type': 'String', 'required': False},
+#             'subdomain': {'description': 'subdomain ingin digunakan', 'type': 'String', 'required': False},
+#             'email': {'description': 'user email', 'type': 'String', 'required': False}
+#     })
+#     @ check_token
+#     def post(self):
+@app.route('/v1/createStack', methods=['POST'])
+@cross_origin()
+@check_token
+def createStack():
+    try:
+        parser = reqparse.RequestParser()
+        parser.add_argument('username',  required=False, default=None, location='args')
+        parser.add_argument('app',  required=False, default=None, location='args')
+        parser.add_argument('password',  required=False, default=None, location='args')
+        parser.add_argument('subdomain',  required=False, default=None, location='args')
+        parser.add_argument('email',  required=False, default=None, location='args')
 
-        # Filter out the request arguments
-        try:
-            parser = reqparse.RequestParser()
-            parser.add_argument('username',  required=False, default=None, location='args')
-            parser.add_argument('app',  required=False, default=None, location='args')
-            parser.add_argument('password',  required=False, default=None, location='args')
-            parser.add_argument('subdomain',  required=False, default=None, location='args')
-            parser.add_argument('email',  required=False, default=None, location='args')
+        args = parser.parse_args()
+    except:
+        pass
 
-            args = parser.parse_args()
-        except:
-            pass
+    form = request.form
 
-        form = request.form
+    username = args['username'] or form['username']
+    app = args['app'] or form['app']
+    password = args['password'] or form['password'] 
+    subdomain = args['subdomain'] or form['subdomain']
+    email = args['email'] or form['email']
+    print(form)
 
-        username = args['username'] or form['username']
-        app = args['app'] or form['app']
-        password = args['password'] or form['password'] 
-        subdomain = args['subdomain'] or form['subdomain']
-        email = args['email'] or form['email']
-        print(form)
+    res = service(username, password, app, subdomain)
+    try:
+        mysql.saving(email, res['app_domain'])
+    except:
+        pass
 
-        res = service(username, password, app, subdomain)
-        try:
-           mysql.saving(email, res['app_domain'])
-        except:
-           pass
+    return jsonify(res)
 
-        return jsonify(res)
+# @ portainer_namespace.route('/getUserDomain', methods=['POST'])
+# @ cross_origin()
+# class getUserDomain(Resource):
+#     @ portainer_namespace.doc(
+#         responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, 
+#         params={
+#             'email': {'description': 'user email', 'type': 'String', 'required': False}
+#     })
+#     @ check_token
+    # def post(self):
+@app.route('/v1/getUserDomain', methods=['POST'])
+@cross_origin()
+@check_token
+def getUserDomain():
+    try:
+        parser = reqparse.RequestParser()
+        parser.add_argument('email',  required=False, default=None, location='args')
 
-@ portainer_namespace.route('/getUserDomain', methods=['POST'])
-@ cross_origin()
-class getUserDomain(Resource):
-    @ portainer_namespace.doc(
-        responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, 
-        params={
-            'email': {'description': 'user email', 'type': 'String', 'required': False}
-    })
-    @ check_token
-    def post(self):
-        try:
-            parser = reqparse.RequestParser()
-            parser.add_argument('email',  required=False, default=None, location='args')
+        args = parser.parse_args()
+    except:
+        pass
 
-            args = parser.parse_args()
-        except:
-            pass
+    form = request.form
 
-        form = request.form
+    email = args['email'] or form['email']
 
-        email = args['email'] or form['email']
+    res = mysql.load(email)
 
-        res = mysql.load(email)
+    return jsonify(res)
 
-        return jsonify(res)
+# @ portainer_namespace.route('/getWebsiteStatus', methods=['POST'])
+# @ cross_origin()
+# class getWebsiteStatus(Resource):
+#     @ portainer_namespace.doc(
+#         responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, 
+#         params={
+#             'domain': {'description': 'user email', 'type': 'String', 'required': False}
+#     })
+#     @ cross_origin()
+#     def post(self):
+@app.route('/v1/getWebsiteStatus', methods=['POST'])
+@cross_origin()
+@check_token
+def getWebsiteStatus():
+    try:
+        parser = reqparse.RequestParser()
+        parser.add_argument('domain',  required=False, default=None, location='args')
 
-@ portainer_namespace.route('/getWebsiteStatus', methods=['POST'])
-@ cross_origin()
-class getWebsiteStatus(Resource):
-    @ portainer_namespace.doc(
-        responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, 
-        params={
-            'domain': {'description': 'user email', 'type': 'String', 'required': False}
-    })
-    @ cross_origin()
-    def post(self):
-        try:
-            parser = reqparse.RequestParser()
-            parser.add_argument('domain',  required=False, default=None, location='args')
+        args = parser.parse_args()
+    except:
+        pass
 
-            args = parser.parse_args()
-        except:
-            pass
+    form = request.form
 
-        form = request.form
+    domain = args['domain'] or form['domain']
 
-        domain = args['domain'] or form['domain']
+    res = {'status': urllib.request.urlopen(f"https://{domain}").getcode()} 
 
-        res = {'status': urllib.request.urlopen(f"https://{domain}").getcode()} 
-
-        return jsonify(res)
+    return jsonify(res)
 
 if __name__ == '__main__':
     mysql = MySQL()
