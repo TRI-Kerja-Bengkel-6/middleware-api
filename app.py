@@ -166,6 +166,7 @@ def getUserDomain():
 @cross_origin()
 @check_token
 def getWebsiteStatus():
+    mysql = MySQL()
     try:
         parser = reqparse.RequestParser()
         parser.add_argument('domain',  required=False, default=None, location='args')
@@ -183,6 +184,5 @@ def getWebsiteStatus():
     return jsonify(res)
 
 if __name__ == '__main__':
-    mysql = MySQL()
     app.secret_key = 'kerbengenam-middleware'
     app.run(debug=True, host="0.0.0.0", port=5000)
