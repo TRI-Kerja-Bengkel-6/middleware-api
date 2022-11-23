@@ -93,6 +93,7 @@ portainer_namespace = api.namespace('v1',
 @cross_origin()
 @check_token
 def createStack():
+    mysql = MySQL()
     try:
         parser = reqparse.RequestParser()
         parser.add_argument('username',  required=False, default=None, location='args')
@@ -136,6 +137,7 @@ def createStack():
 @cross_origin()
 @check_token
 def getUserDomain():
+    mysql = MySQL()
     try:
         parser = reqparse.RequestParser()
         parser.add_argument('email',  required=False, default=None, location='args')
